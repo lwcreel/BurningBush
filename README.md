@@ -5,4 +5,7 @@ Our plan for the CSCE 470 project is to create a search engine, known as The Bur
 Possibly helpful links: <br>
 https://towardsdatascience.com/tf-idf-for-document-ranking-from-scratch-in-python-on-real-world-dataset-796d339a4089
 http://lixinzhang.github.io/implementation-of-okapi-bm25-on-python.html
+
 https://www.geeksforgeeks.org/python-gui-tkinter/
+
+https://pypi.org/project/pyspellchecker/
