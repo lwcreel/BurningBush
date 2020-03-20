@@ -14,6 +14,7 @@ http://lixinzhang.github.io/implementation-of-okapi-bm25-on-python.html<br>
 https://github.com/RaRe-Technologies/gensim/blob/develop/gensim/summarization/bm25.py<br>
 https://stackoverflow.com/questions/40966014/how-to-use-gensim-bm25-ranking-in-python
 
-https://www.geeksforgeeks.org/python-gui-tkinter/
+https://www.geeksforgeeks.org/python-gui-tkinter/<br>
+http://code.activestate.com/recipes/580773-tkinter-search-box/
 
 https://pypi.org/project/pyspellchecker/
