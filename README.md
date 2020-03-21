@@ -18,4 +18,4 @@ https://pypi.org/project/rank-bm25/
 https://www.geeksforgeeks.org/python-gui-tkinter/<br>
 http://code.activestate.com/recipes/580773-tkinter-search-box/
 
-https://pypi.org/project/pyspellchecker/
+https://pypi.org/project/pyspellchecker/ (https://github.com/dorianbrown/rank_bm25)
