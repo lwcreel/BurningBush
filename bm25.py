@@ -9,7 +9,7 @@ corpus = [
 ]
 tokenized_corpus = [doc.split(" ") for doc in corpus]
 print(tokenized_corpus)
-# we will have to make sure our corpus is is all lowercase and has no puncutation and all that
+# we will have to make sure our corpus is all lowercase and has no puncutation and all that
 
 bm25 = BM25Okapi(tokenized_corpus)
 
