@@ -28,7 +28,7 @@ acronym_dictionary={"AKA":"Also known as", "OT":"Overtime"}
 #GUI
 root = tk.Tk() 
 root.title('The Burning Bush')
-root.iconbitmap("favicon_v3.ico")
+root.iconbitmap("icon.ico")
 root.geometry('520x440')
 root.maxsize(520,440)
 root.minsize(520,440)

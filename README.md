@@ -12,7 +12,8 @@ Possibly helpful links: <br>
 https://towardsdatascience.com/tf-idf-for-document-ranking-from-scratch-in-python-on-real-world-dataset-796d339a4089<br>
 http://lixinzhang.github.io/implementation-of-okapi-bm25-on-python.html<br>
 https://github.com/RaRe-Technologies/gensim/blob/develop/gensim/summarization/bm25.py<br>
-https://stackoverflow.com/questions/40966014/how-to-use-gensim-bm25-ranking-in-python
+https://stackoverflow.com/questions/40966014/how-to-use-gensim-bm25-ranking-in-python<br>
+https://pypi.org/project/rank-bm25/ (https://github.com/dorianbrown/rank_bm25)
 
 https://www.geeksforgeeks.org/python-gui-tkinter/<br>
 http://code.activestate.com/recipes/580773-tkinter-search-box/
