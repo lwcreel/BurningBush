@@ -47,25 +47,16 @@ doc_scores = list(doc_scores)
 matches = []
 length = len(doc_scores)
 doc_scores_sorted = sorted(doc_scores, reverse=True)
-doc_scores = [.1,.3,.3,.2,.3]
-
-doc_scores_sorted = [.3,.3,.3,.2,.1]
-# [1,2,4,3,0]
 print(doc_scores_sorted)
+# doc_scores = [.1,.3,.3,.2,.3]
+# doc_scores_sorted = [.3,.3,.3,.2,.1]
+# # [1,2,4,3,0]
 
-# for i in range(length):
 i = 0
-j = 1
 while (i < len(doc_scores_sorted) and doc_scores_sorted[i] > 0): 
     match = doc_scores.index(doc_scores_sorted[i])
-    #while (match in matches):
-    #   match = doc_scores.index(doc_scores_sorted[i], i)
-
-    if (match in matches):
-        i += 1
-        match = doc_scores.index(doc_scores_sorted[i],i)
-
     matches.append(match) # matches will have the indices of the ones over 0
+    doc_scores[match] = "done"
     i += 1   
         
 print("matches: ",matches)
