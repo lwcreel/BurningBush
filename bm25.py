@@ -18,17 +18,17 @@ corpus = [
 ]
 
 stemmedCorpus = [
-    "1:1 in the begin god creat the heaven and the earth",
-    "1:2 and the earth wa without form and void and dark wa upon the face of the deep and the spirit of god move upon the face of the water",
-    "1:3 and god said let there be light and there wa light",
-    "1:4 and god saw the light that it wa good and god divid the light from the dark",
-    "1:5 and god call the light day and the dark he call night and the even and the morn were the first day"
+    "1:1 begin god creat heaven earth",
+    "1:2 earth without form void dark upon face deep spirit god move upon face water",
+    "1:3 god said let light light",
+    "1:4 god saw light good god divid light dark",
+    "1:5 god call light day dark call night even morn first day"
 ]
 
 tokenized_corpus = [doc.split(" ") for doc in stemmedCorpus]
 bm25 = BM25Okapi(tokenized_corpus)
 
-query = "the day"
+query = "god"
 
 pat = re.compile(r'[^A-Za-z0-9 \:]+')
 query = re.sub(pat, '', query).lower()
@@ -42,14 +42,35 @@ print(stemmed_query)
 
 doc_scores = bm25.get_scores(stemmed_query)
 print (doc_scores)
+doc_scores = list(doc_scores)
 
 matches = []
-length = len(doc_scores) 
-for i in range(length): # this keeps a count of how many of the results have a score over some cutoff
-    if(doc_scores[i] > 0):
-        matches.append(i)
+length = len(doc_scores)
+doc_scores_sorted = sorted(doc_scores, reverse=True)
+doc_scores = [.1,.3,.3,.2,.3]
 
-# all_results = bm25.get_top_n(tokenized_query, corpus)#, n=1)
+doc_scores_sorted = [.3,.3,.3,.2,.1]
+# [1,2,4,3,0]
+print(doc_scores_sorted)
+
+# for i in range(length):
+i = 0
+j = 1
+while (i < len(doc_scores_sorted) and doc_scores_sorted[i] > 0): 
+    match = doc_scores.index(doc_scores_sorted[i])
+    #while (match in matches):
+    #   match = doc_scores.index(doc_scores_sorted[i], i)
+
+    if (match in matches):
+        i += 1
+        match = doc_scores.index(doc_scores_sorted[i],i)
+
+    matches.append(match) # matches will have the indices of the ones over 0
+    i += 1   
+        
+print("matches: ",matches)
+
+# allResults = bm25.get_top_n(tokenized_query, stemmedCorpus, n=10)
 
 results = [corpus[i] for i in matches]
 
