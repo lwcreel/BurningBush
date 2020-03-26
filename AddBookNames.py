@@ -1,6 +1,9 @@
 import re
 
-# open Bible file
+# open Bible files
+# bible = open("Docs/Bible.txt", "r")
+# bibleWithBookNames = open("Docs/BibleWithBookNames.txt", "w")
+
 bible = open("Docs/StemmedBible.txt", "r")
 bibleWithBookNames = open("Docs/StemmedBibleWithBookNames.txt", "w")
 
@@ -14,6 +17,7 @@ for word in bibleText:
     if (re.match(r"^1:1$", word)):
         currBook = bibleText[index-1]
     elif (re.match(r"^[0-9]+:[0-9]+$", word)):
+        bibleWithBookNames.write("_ ")
         bibleWithBookNames.write(currBook)
         bibleWithBookNames.write(" ")
     bibleWithBookNames.write(word)

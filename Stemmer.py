@@ -20,7 +20,7 @@ quranOut = open("Docs/StemmedQuran.txt", "w")
 
 bibleText = bible.read() # read data
 bibleText = bibleText.replace('\n', ' ') # replace new line with spaces
-pat = re.compile(r'[^A-Za-z0-9 \:\_]+') # get rid of puncuation besides :
+pat = re.compile(r'[^A-Za-z0-9 \:\_]+') # get rid of puncuation besides : and _
 bibleText = re.sub(pat, '', bibleText)
 bibleText = bibleText.split() # split into words by spaces
 
@@ -31,15 +31,21 @@ bibleText = bibleText.split() # split into words by spaces
 index = 0
 for word in bibleText:
     if (index != len(bibleText)-1):
-        if ("King_James_Bible" in word): # indicates it is the start of a testament (old/new), want to not stem and not lowercase
-            bibleOut.write(word)
-            bibleOut.write(" ")
-        elif (re.match(r"^1:1$", bibleText[index+1])): # next word is 1:1 so current word is book chapter, want to not stem and not lowercase
+        # if ("King_James_Bible" in word): # indicates it is the start of a testament (old/new), want to not stem and not lowercase
+        #     # bibleOut.write(word)
+        #     # bibleOut.write(" ")
+        #     pass # don't include testament names for now
+        if (re.match(r"^1:1$", bibleText[index+1])): # next word is 1:1 so current word is book chapter, want to not stem and not lowercase
             bibleOut.write(word)
             bibleOut.write(" ")
         elif (re.match(r"[0-9]+:[0-9]+", word)): # is a chapter:verse
             bibleOut.write(word)
             bibleOut.write(" ")
+            # chapterVerse = word.split(":") # split into words by :
+            # bibleOut.write(chapterVerse[0])
+            # bibleOut.write(": ")
+            # bibleOut.write(chapterVerse[1])
+            # bibleOut.write(" ")
         elif (word.lower() in stopwords.words('english')): # don't include stop words
             pass
         else:
