@@ -44,8 +44,14 @@ stemmedCorpusB = stemmedBible.read().split(" _ ")
 tokenized_corpus = [doc.split(" ") for doc in stemmedCorpusB]
 bm25 = BM25Okapi(tokenized_corpus)
 
-book = ""
+book = "Psalms"
+chapter = ""
+if (chapter != ""):
+    chapter = chapter + ":"
+verse = ""
 query = "love"
+
+oneVerse = False
 
 pat = re.compile(r'[^A-Za-z0-9 \:]+')
 query = re.sub(pat, '', query).lower() # make query lowercase
@@ -55,8 +61,15 @@ stemmed_query = [];
 for word in tokenized_query: # stem query
     word = stemmer.stem(word)
     stemmed_query.append(word)
-if (book != ""):
-    stemmed_query.insert(0, book)
+if (book != "" and chapter != "" and verse != ""):
+    stemmed_query = [book, chapter, verse]
+    oneVerse = True
+else:
+    if (chapter != ""):
+        stemmed_query.insert(0, chapter)
+    if (book != ""):
+        stemmed_query.insert(0, book)
+
 print(stemmed_query)
 
 doc_scores = bm25.get_scores(stemmed_query) # get scores
@@ -65,11 +78,6 @@ doc_scores = list(doc_scores) # make doc_scores a list
 
 doc_scores_sorted = sorted(doc_scores, reverse=True) # sort scores in decreasing order (highest score first)
 # print(doc_scores_sorted)
-
-# test for 3 of same score
-# doc_scores = [.1,.3,.3,.2,.3]
-# doc_scores_sorted = [.3,.3,.3,.2,.1]
-# # should be: [1,2,4,3,0]
 
 if (len(doc_scores_sorted) < 10): # 10 here makes it to where it will find top 10 results (or less)
     length = len(doc_scores_sorted)
@@ -90,7 +98,10 @@ while (i < length and doc_scores_sorted[i] > 0):
 
 results = [corpusB[i] for i in matches] # this holds the final results
 
+
 if (len(results) == 0):
-    print("No results found. Suggestions: make query more specific and check for misspellings.")
+        print("No results found. Suggestions: make query more specific and check for misspellings.")
+elif (oneVerse):
+    print(results[0])
 else:
     print(*results, sep = "\n")

@@ -16,8 +16,8 @@ stemmedBible = open("Docs/StemmedBibleWithBookNames.txt", "r")
 corpusB = bible.read().split(" _ ") 
 stemmedCorpusB = stemmedBible.read().split(" _ ")
 # random tests:
-# print(corpusB[20321])
-# print(stemmedCorpusB[20321])
+print(corpusB[25000])
+print(stemmedCorpusB[25000])
 
 # quranText = quran.read() # read data
-# quranText = quranText.split() # split into words by spaces
+# quranText = quranText.split(" _ ") # split into words by spaces

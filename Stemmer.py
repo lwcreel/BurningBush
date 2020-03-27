@@ -41,11 +41,6 @@ for word in bibleText:
         elif (re.match(r"[0-9]+:[0-9]+", word)): # is a chapter:verse
             bibleOut.write(word)
             bibleOut.write(" ")
-            # chapterVerse = word.split(":") # split into words by :
-            # bibleOut.write(chapterVerse[0])
-            # bibleOut.write(": ")
-            # bibleOut.write(chapterVerse[1])
-            # bibleOut.write(" ")
         elif (word.lower() in stopwords.words('english')): # don't include stop words
             pass
         else:
@@ -53,13 +48,13 @@ for word in bibleText:
                 word = word.replace(':','')
             bibleOut.write(stemmer.stem(word.lower())) # stem word
             bibleOut.write(" ")
-    else :
+    else:
         bibleOut.write(stemmer.stem(word.lower())) # stem the very last word
     index += 1
 
 # for word in quranText:
 #     if (word in stopwords.words('english')): # don't include stop words
-#         break
-#     else :
+#         pass
+#     else:
 #         quranOut.write(stemmer.stem(word)) # stem word
 #     quranOut.write(" ")
