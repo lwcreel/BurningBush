@@ -70,3 +70,7 @@ for word in bibleText:
 #         bibleWithBookNames.write(word)
 #         bibleWithBookNames.write(" ")
 #     index += 1
+
+
+
+  
