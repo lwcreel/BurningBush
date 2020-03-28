@@ -22,5 +22,5 @@ stemmedCorpusB = stemmedBible.read().split(" _ ")
 corpusQ = quran.read().split(" _ ")
 stemmedCorpusQ = stemmedQuran.read().split(" _ ")
 
-print(corpusQ[500])
-print(stemmedCorpusQ[500])
+print(corpusQ[1000])
+print(stemmedCorpusQ[1000])
