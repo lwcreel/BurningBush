@@ -17,8 +17,7 @@ def CreateCorpus(file1, file2):
     stemmedCorpus = stemmedDoc.read().split(" _ ")
     return corpus, stemmedCorpus
 
-def StemQuery(query):
-    stemmer = PorterStemmer()
+def StemQuery(stemmer, query, doc, book, chapter):
     pat = re.compile(r'[^A-Za-z0-9 \:]+')
     query = re.sub(pat, '', query).lower() # make query lowercase
     tokenized_query = query.split(" ") # split query by space
@@ -27,74 +26,96 @@ def StemQuery(query):
     for word in tokenized_query: # stem query
         word = stemmer.stem(word)
         stemmed_query.append(word)
+    if (doc == "b"):
+        if (chapter != ""):
+            stemmed_query.insert(0, chapter)
+        if (book != ""):
+            stemmed_query.insert(0, book)
+    elif (doc == "q"):
+        if (chapter != ""):
+            stemmed_query.insert(0, chapter)
+    print(stemmed_query)
     return stemmed_query
 
+def OneVerse(query, doc):
+    if (doc == "b"):
+        results = [i for i in corpusB if query in i] 
+    elif (doc == "q"):
+        results = [i for i in corpusB if query in i] 
+    return results
+
+def Search(stemmer, stemmed_query, corpus, stemmedCorpus):
+    tokenized_corpus = [doc.split(" ") for doc in stemmedCorpus]
+    bm25 = BM25Okapi(tokenized_corpus)
+
+    doc_scores = list(bm25.get_scores(stemmed_query)) # get scores and make it a list
+    doc_scores_sorted = sorted(doc_scores, reverse=True) # sort scores in decreasing order (highest score first)
+    
+    if (len(doc_scores_sorted) < 10): # 10 here makes it to where it will find top 10 results (or less)
+        length = len(doc_scores_sorted)
+    else:
+        length = 10
+
+    matches = []
+    i = 0
+    while (i < length and doc_scores_sorted[i] > 0):
+        match = doc_scores.index(doc_scores_sorted[i])
+        matches.append(match) # matches will contain the indices of the results with a score over 0
+        doc_scores[match] = "done"
+        i += 1
+
+    results = [corpus[i] for i in matches] # this holds the final results
+    return results
+        
+
+# main
 
 stemmer = PorterStemmer()
 
-corpusB, stemmedCorpusB = CreateCorpus("BibleWithBookNames.txt","StemmedBibleWithBookNames.txt")
-corpusQ, stemmedCorpusQ = CreateCorpus("quranWithSpaces.txt","StemmedQuran.txt")
+corpusB, stemmedCorpusB = CreateCorpus("BibleWithBookNames.txt", "StemmedBibleWithBookNames.txt")
+corpusQ, stemmedCorpusQ = CreateCorpus("quranWithSpaces.txt", "StemmedQuran.txt")
 
 oneVerse = False
-book = "Psalms"
-chapter = "22"
-if (chapter != ""):
-    chapter = chapter + ":"
-verse = "12"
-query = "loved"
+doc = "b"
+book = ""
+chapter = ""
+verse = ""
+query = "the lord said"
 
-if (book != "" and chapter != "" and verse != ""):
-    stemmed_query = [book, chapter, verse]
-    oneVerse = True
-else:
-    stemmed_query = StemQuery(query)
+if (doc == "b"):
     if (chapter != ""):
-        stemmed_query.insert(0, chapter)
-    if (book != ""):
-        stemmed_query.insert(0, book)
-print(stemmed_query)
+        chapter = chapter + ":"
+    if (book != "" and chapter != "" and verse != ""):
+        stemmed_query = book + " " + chapter + verse
+        results = OneVerse(stemmed_query, "b")
+        oneVerse = True
+    else:
+        stemmed_query = StemQuery(stemmer, query, "b", book, chapter)
+        results = Search(stemmer, stemmed_query, corpusB, stemmedCorpusB)
+elif (doc == "q"):
+    if (chapter != ""):
+        chapter = chapter + "|"
+    if (chapter != "" and verse != ""):
+        stemmed_query = chapter + "|" + verse
+        results = OneVerse(stemmer, stemmed_query, "q")
+        oneVerse = True
+    else:
+        stemmed_query = StemQuery(stemmer, query, "q", book, chapter)
+        results = Search(stemmer, stemmed_query, corpusQ, stemmedCorpusQ)
+
+if (oneVerse and len(results) == 0):
+    print("No results found. Chapter or verse out of range.")
+elif (oneVerse):
+    results = results[0]
+    print(*results, sep = "")
+elif (len(results) == 0):
+    print("No results found. Suggestions: make your query more specific and check for misspellings.")
+else:
+    print(*results, sep = "\n")
+
+
 
 # could do the substring thing to make a new corpus and only search the smaller corpus if book and/or chapter
 # corpusB = [i for i in corpusB if stemmed_query in i] 
 # stemmed_query = book + " " + chapter
 # stemmedCorpusB = [i for i in corpusB if stemmed_query in i] 
-# print (stemmedCorpusB)
-
-tokenized_corpus = [doc.split(" ") for doc in stemmedCorpusB]
-bm25 = BM25Okapi(tokenized_corpus)
-
-doc_scores = bm25.get_scores(stemmed_query) # get scores
-doc_scores = list(doc_scores) # make doc_scores a list
-doc_scores_sorted = sorted(doc_scores, reverse=True) # sort scores in decreasing order (highest score first)
-# print (doc_scores)
-# print(doc_scores_sorted)
-
-if (len(doc_scores_sorted) < 10): # 10 here makes it to where it will find top 10 results (or less)
-    length = len(doc_scores_sorted)
-else:
-    length = 10
-
-matches = []
-i = 0
-while (i < length and doc_scores_sorted[i] > 0):
-    match = doc_scores.index(doc_scores_sorted[i])
-    matches.append(match) # matches will contain the indices of the results with a score over 0
-    doc_scores[match] = "done"
-    i += 1
-# print(matches)
-
-# all_results = bm25.get_top_n(tokenized_query, stemmedCorpusB, n=10)
-
-results = [corpusB[i] for i in matches] # this holds the final results
-
-if (len(results) == 0):
-    print("No results found. Suggestions: make query more specific and check for misspellings.")
-elif (oneVerse):
-    subs = book + " " + chapter + verse
-    results = [i for i in corpusB if subs in i] 
-    if (len(results) == 0):
-        print("No results found. Chapter or verse out of range.")
-    else:
-        print(*results, sep = "\n")
-else:
-    print(*results, sep = "\n")
