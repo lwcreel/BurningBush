@@ -77,9 +77,9 @@ corpusQ, stemmedCorpusQ = CreateCorpus("quranWithSpaces.txt", "StemmedQuran.txt"
 
 oneVerse = False
 doc = "b"
-book = ""
-chapter = ""
-verse = ""
+book = "John"
+chapter = "1"
+verse = "1"
 query = "the lord said"
 
 if (doc == "b"):
@@ -105,13 +105,14 @@ elif (doc == "q"):
 
 if (oneVerse and len(results) == 0):
     print("No results found. Chapter or verse out of range.")
-elif (oneVerse):
-    results = results[0]
-    print(*results, sep = "")
 elif (len(results) == 0):
     print("No results found. Suggestions: make your query more specific and check for misspellings.")
 else:
-    print(*results, sep = "\n")
+    if (oneVerse):
+        results = results[0]
+        print(*results, sep = "")
+    else:
+        print(*results, sep = "\n")
 
 
 
