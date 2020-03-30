@@ -35,9 +35,9 @@ acronym_dictionary={"AKA":"Also known as", "OT":"Overtime"}
 root = tk.Tk() 
 root.title('The Burning Bush')
 root.iconbitmap("icon.ico")
-root.geometry('520x440')
-root.maxsize(520,440)
-root.minsize(520,440)
+root.geometry('460x420')
+root.maxsize(460,420)
+root.minsize(460,420)
 
 # create notebook and tabs
 tabParent  = ttk.Notebook(root)
@@ -96,10 +96,16 @@ ayahSpinBox    = tk.Spinbox(quranTab, width=7).grid(row=1, column=3)
 quranSearchBox = tk.Entry(quranTab, width=30).grid(row=2, column=1)
 quranResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
 
-# TODO:
 ### build comparison tab ###
 
+# add labels
+Label(compareTab, text="Comparison", font=("Helvetica", 16), padx=3, pady=7).grid(row=0, column=0, sticky=W)
+Label(compareTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
+Label(compareTab, text="\n\nResults", font=("Times New Roman", 12), padx=3, pady=7).grid(row=3, column=0, sticky=W) # \n escapes for alignment
 
+# add controls for search
+compareSearchBox = tk.Entry(compareTab, width=30).grid(row=2, column=1)
+compareResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
 
 # run code
 root.mainloop()
