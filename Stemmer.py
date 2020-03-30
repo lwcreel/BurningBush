@@ -49,7 +49,7 @@ index = 0
 #         bibleOut.write(stemmer.stem(word.lower())) # stem the very last word
 #     index += 1
 
-quran_sp = open("Docs/quranWithSpaces.txt")
+quran_sp = open("Docs/QuranWithSpaces.txt")
 #quranWithLines = open("Docs/quranWithLines.txt", "w")
 quranText = quran_sp.read() # read data
 #punct = re.compile(r'[^A-Za-z0-9 \|(\n)]+', re.MULTILINE) # get rid of puncuation |

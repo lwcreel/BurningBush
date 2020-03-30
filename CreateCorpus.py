@@ -9,7 +9,7 @@ stemmedCorpusQ =[]
 bible = open("Docs/BibleWithBookNames.txt", "r")
 stemmedBible = open("Docs/StemmedBibleWithBookNames.txt", "r")
 
-quran = open("Docs/quranWithSpaces.txt", "r")
+quran = open("Docs/QuranWithSpaces.txt", "r")
 stemmedQuran = open("Docs/StemmedQuran.txt", "r")
 
 # read data and split by " _ " to store verses individually as "documents"
