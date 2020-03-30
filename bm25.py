@@ -48,7 +48,7 @@ def OneVerse(query, doc):
     if (doc == "b"):
         results = [i for i in corpusB if query in i] 
     elif (doc == "q"):
-        results = [i for i in corpusB if query in i] 
+        results = [i for i in corpusQ if query in i] 
     return results
 
 # uses BM25 on the stemmed corpus to give scores for each document in order to return the top <amt> of documents from corpus that are most relevant
@@ -88,11 +88,11 @@ corpusB, stemmedCorpusB = CreateCorpus("BibleWithBookNames.txt", "StemmedBibleWi
 corpusQ, stemmedCorpusQ = CreateCorpus("QuranWithSpaces.txt", "StemmedQuran.txt")
 
 # user input / query section
-doc = "b" # b for Bible, q for Quran, x for both
+doc = "q" # b for Bible, q for Quran, x for both
 book = ""
-chapter = ""
+chapter = "2"
 verse = ""
-query = "loved you"
+query = "hearts disease"
 
 # separated based on the doc (b, q, or x)
 if (doc == "b"):
@@ -110,8 +110,8 @@ elif (doc == "q"):
         chapter = chapter + "|" # add pipe if they have chapter
     if (chapter != "" and verse != ""): # if have both, only search for one verse
         oneVerse = True
-        stemmed_query = chapter + "|" + verse
-        results = OneVerse(stemmer, stemmed_query, "q")
+        stemmed_query = chapter + verse
+        results = OneVerse(stemmed_query, "q")
     else: # regular search
         stemmed_query = StemQuery(stemmer, query, "q", "", chapter)
         results = Search(stemmer, stemmed_query, corpusQ, stemmedCorpusQ, 10)
