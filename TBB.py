@@ -63,7 +63,7 @@ helpmenu.add_command(label='Settings', command=about)
 
 # create frames for entry and results
 bibleFrameTop    = Frame(bibleTab).grid(row=0)
-bibleFrameBottom = Frame(bibleTab).grid(row=1) 
+bottomFrame = Frame(bibleTab).grid(row=1) 
 
 # add labels
 Label(bibleTab, text="Bible", font=("Helvetica", 16), padx=3, pady=7).grid(row=0, column=0, sticky=W)
@@ -78,32 +78,28 @@ bookSpinBox    = tk.Spinbox(bibleTab).grid(row=1, column=1)
 chapterSpinBox = tk.Spinbox(bibleTab, width=7).grid(row=1, column=3)
 verseSpinBox   = tk.Spinbox(bibleTab, width=7).grid(row=1, column=4+1)
 bibleSearchBox = tk.Entry(bibleTab, width=30).grid(row=2, column=1)
-bibleResultBox = tk.Text(bibleFrameBottom,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
+bibleResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
 
 
-# final formatting for layout
+### build quran tab ###
 
-# configuring search box for quran
-Label(quranTab, text="Search box:").grid(row=0, sticky=W)
-quranEntry = Entry(quranTab)
-quranEntry.grid(row=0, column=1)
+# add labels
+Label(quranTab, text="Quran", font=("Helvetica", 16), padx=3, pady=7).grid(row=0, column=0, sticky=W)
+Label(quranTab, text="Surah", font=("Times New Roman", 12), padx=3, pady=7).grid(row=1, column=0, sticky=W)
+Label(quranTab, text="Ayah", font=("Times New Roman", 12), padx=3, pady=7).grid(row=1, column=2)
+Label(quranTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
+Label(quranTab, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=3, column=0, sticky=W)
 
-Label(quranTab, text = "Result:").grid(row=1,column=0)
-resultBoxQuran = Entry(quranTab)
-resultBoxQuran.grid(row=1,column=1)
+# add controls for search
+surahSpinBox   = tk.Spinbox(quranTab).grid(row=1, column=1)
+ayahSpinBox    = tk.Spinbox(quranTab, width=7).grid(row=1, column=3)
+quranSearchBox = tk.Entry(quranTab, width=30).grid(row=2, column=1)
+quranResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
 
-#quranEntry.bind('<Return>', search(quranEntry, resultBoxQuran))
-q1 = tk.Button(quranTab, text = "Search", width=12, command=search(quranEntry, resultBoxQuran))
-q1.grid(row=0, column=4)
+# TODO:
+### build comparison tab ###
 
 
-# configure results for quran
-resultBoxQuran = tk.Listbox(quranTab, height=0, width=35)
-resultBoxQuran.grid(row=1, rowspan=4, columnspan=2)
-sq1 = tk.Scrollbar(quranTab)
-sq1.grid(row=1, column=3)
-resultBoxQuran.configure(yscrollcommand=sq1.set)
-sq1.configure(command=resultBoxQuran.yview)
 
 # run code
 root.mainloop()
