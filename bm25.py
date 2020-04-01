@@ -1,4 +1,5 @@
 # have to do: pip install rank_bm25
+# have to do: pip install pyspellchecker
 
 import re
 import nltk
@@ -8,6 +9,7 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from rank_bm25 import BM25Okapi
 from nltk.corpus import stopwords
+from spellchecker import SpellChecker
 
 # functions:
 # creates both the regular corpus and the stemmed corpus by splitting by " _ "
@@ -20,16 +22,52 @@ def CreateCorpus(file1, file2):
     stemmedCorpus = stemmedDoc.read().split(" _ ")
     return corpus, stemmedCorpus
 
+# small function to replace an word in a list with replaceWith, used in FixMisspellings function
+def replace(l, word, replaceWith):
+    for i, element in enumerate(l):
+        if element == word:
+            l[i] = replaceWith
+    return l
+
+# cleans up the texts for the FixMisspellings function
+def CleanTexts (document):
+    doc = open("Docs/"+document+".txt", "r")
+    docText = doc.read() # read data
+    docText = docText.replace('\n', ' ') # replace new line with spaces
+    pat = re.compile(r'[^A-Za-z0-9 \:\|]+') # get rid of puncuation besides : and |
+    docText = re.sub(pat, '', docText)
+    docText = docText.split() # split into words by spaces
+    docText = [word.lower() for word in docText] # make lowercase
+    return docText
+
+# fixes any misspellings in the query
+def FixMisspellings(tokenized_query):
+    spell = SpellChecker()
+    # gets rid of puncuation, makes lowercase
+    bibleText = CleanTexts("BibleWithBookNames")
+    quranText = CleanTexts("QuranWithSpaces")
+    # add words to their dictionary, I fed in the entire Bible and Quran, along with all the books of the Bible
+    spell.word_frequency.load_words(["Genesis‌","Exodus","Leviticus‌","Numbers‌","Deuteronomy","Joshua","‌Judges","‌Ruth","‌1Samuel‌‌","2Samuel","‌‌1Kings‌‌","2Kings‌‌","1Chronicles‌","2Chronicles‌","Ezra‌","Nehemiah","‌Esther","‌Job","‌Psalms‌","Proverbs","‌Ecclesiastes‌","SongofSolomon‌","Isaiah‌","Jeremiah","‌Lamentations‌","Ezekiel","‌Daniel‌","Hosea","‌Joel‌","Amos‌","Obadiah‌","Jonah","Micah","Nahum","‌Habakkuk","Zephaniah‌","‌Haggai‌","Zechariah","Malachi‌","Matthew‌","Mark","‌Luke‌","John","‌Acts‌","Romans‌","‌1‌Corinthians","2Corinthians‌","Galatians‌","Ephesians‌","Philippians‌","Colossians‌","1Thessalonians‌","2Thessalonians‌","1Timothy‌","2Timothy‌","Titus‌","Philemon‌","Hebrews‌","James","1Peter‌","2Peter","1John‌","2John‌","3John‌","Jude‌","Revelation"])
+    spell.word_frequency.load_words(bibleText+quranText)
+    misspelled = spell.unknown(tokenized_query) # finds the misspelled words
+    for word in misspelled: # replaces misspelled words with the most likely replacement
+        tokenized_query = replace(tokenized_query,word,spell.correction(word))
+        print ("Replacing \"" + word +"\" with \""+ spell.correction(word) + "\"")
+        # print(spell.candidates(word)) # gets multiple options, could be useful
+    return tokenized_query
+
 # cleans up the query and adds book/chapter to query if needed
 def StemQuery(stemmer, query, doc, book, chapter):
     pat = re.compile(r'[^A-Za-z0-9 \:\|]+') # remove everything but letters, numbers, :, and |
     query = re.sub(pat, '', query).lower() # make query lowercase
     tokenized_query = query.split(" ") # split query by space
     tokenized_query = [word for word in tokenized_query if word not in stopwords.words('english')] # remove stop words from query
+    tokenized_query = FixMisspellings(tokenized_query) # fix any misspellings that may be in query
     stemmed_query = []
-    for word in tokenized_query: # stem query
-        word = stemmer.stem(word)
-        stemmed_query.append(word)
+    if (tokenized_query != ['']): # only need to stem if there is a query
+        for word in tokenized_query: # stem query
+            word = stemmer.stem(word)
+            stemmed_query.append(word)
     if (doc == "b"):
         if (chapter != ""):
             stemmed_query.insert(0, chapter) # adds chapter in front of query if included
@@ -90,9 +128,9 @@ corpusQ, stemmedCorpusQ = CreateCorpus("QuranWithSpaces.txt", "StemmedQuran.txt"
 # user input / query section
 doc = "q" # b for Bible, q for Quran, x for both
 book = ""
-chapter = "2"
+chapter = ""
 verse = ""
-query = "hearts disease"
+query = "beleive"
 
 # separated based on the doc (b, q, or x)
 if (doc == "b"):
