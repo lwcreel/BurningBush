@@ -25,6 +25,7 @@ def about():
 def search():
     tab=tabParent.tab(tabParent.select(), "text")
     stemmer=bm25.stemmer
+    results=""
     
     if (tab == "Bible Search"):
 
@@ -34,12 +35,40 @@ def search():
         verse   = verseSpinBox.get()
         query   = bibleSearchBox.get()
 
-        query = bm25.StemQuery(stemmer, query, "b", book, chapter)
+        if (chapter != ""):
+            chapter = chapter + ":" # add colon if they have chapter
+        if (book != "" and chapter != "" and verse != ""): # if have all 3, only search for one verse
+            oneVerse = True
+            stemmed_query = book + " " + chapter + verse
+            results = bm25.OneVerse(stemmed_query, "b")
+        else: # regular search
+            stemmed_query = bm25.StemQuery(stemmer, query, "b", book, chapter)
+            results = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 10)
+        
+        bibleResultBox.set()
 
     elif (tab == "Quran Search"):
-        pass
+        surah = surahSpinBox.get()
+        ayah  = ayahSpinBox.get()
+
+        if (surah != ""):
+            surah = surah + "|" # add pipe if they have chapter
+        if (surah != "" and ayah != ""): # if have both, only search for one verse
+            oneVerse = True
+            stemmed_query = surah + ayah
+            results = bm25.OneVerse(stemmed_query, "q")
+        else: # regular search
+            stemmed_query = bm25.StemQuery(stemmer, query, "q", "", surah)
+            results = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 10)
+
+        quranResultBox.set(results)
     else:
-        pass
+        both = True
+        stemmed_query = bm25.StemQuery(stemmer, query, "x", book, chapter)
+        # if both, they can only search qith the query, so do a regular search for both
+        resultsB = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 5)
+        resultsQ = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 5)
+        compareResultBox.set(resultsB + resultsQ)
 
 
 acronym_dictionary={"AKA":"Also known as", "OT":"Overtime"}
