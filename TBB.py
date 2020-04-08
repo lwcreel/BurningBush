@@ -46,14 +46,15 @@ def search():
             stemmed_query = bm25.StemQuery(stemmer, query, "b", book, chapter)
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 10)
         i=0
-        for i in len(results):
+        for i in range(len(results)):
             pos = i+1
             pos = str(pos) + '.0'
-            compareResultBox.insert('1.0', results[i])
+            compareResultBox.insert(pos, results[i]+'\n')
 
     elif (tab == "Quran Search"):
         surah = surahSpinBox.get()
         ayah  = ayahSpinBox.get()
+        query   = quranSearchBox.get()
 
         if (surah != ""):
             surah = surah + "|" # add pipe if they have chapter
@@ -66,22 +67,23 @@ def search():
             stemmed_query = bm25.StemQuery(stemmer, query, "q", "", surah)
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 10)
         i=0
-        for i in len(results):
+        for i in range(len(results)):
             pos = i+1
             pos = str(pos) + '.0'
-            compareResultBox.insert('1.0', results[i])
+            compareResultBox.insert(pos, results[i]+'\n')
     else:
+        query   = compareSearchBox.get()
         both = True
-        stemmed_query = bm25.StemQuery(stemmer, query, "x", book, chapter)
+        stemmed_query = bm25.StemQuery(stemmer, query, "x", "", "")
         # if both, they can only search with the query, so do a regular search for both
         resultsB = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 5)
         resultsQ = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 5)
         results  = resultsB + resultsQ
         i=0
-        for i in len(results):
+        for i in range(len(results)):
             pos = i+1
             pos = str(pos) + '.0'
-            compareResultBox.insert('1.0', results[i])
+            compareResultBox.insert(pos, results[i]+'\n')
 
 
 
@@ -168,7 +170,7 @@ Label(compareTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).gr
 # add controls for search
 compareSearchBox = tk.Entry(compareTab, width=30)
 compareSearchBox.grid(row=2, column=1)
-compareResultBox = tk.Text(bottomFrame,width=60-3, height=12)
+compareResultBox = tk.Text(bottomFrame, width=60-3, height=12, wrap="word", spacing1=8)
 compareResultBox.grid(row=4, sticky=W)
 
 ### build bottom frame ###
