@@ -47,9 +47,11 @@ def search():
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 10)
         i=0
         for i in range(len(results)):
-            pos = i+1
-            pos = str(pos) + '.0'
-            compareResultBox.insert(pos, results[i]+'\n')
+            pos1 = i+1
+            pos2 = i+2
+            pos1 = str(pos1) + '.0'
+            pos2 = str(pos2) + '.0'
+            compareResultBox.replace(pos1, pos2, results[i] + '\n')
 
     elif (tab == "Quran Search"):
         surah = surahSpinBox.get()
@@ -68,9 +70,11 @@ def search():
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 10)
         i=0
         for i in range(len(results)):
-            pos = i+1
-            pos = str(pos) + '.0'
-            compareResultBox.insert(pos, results[i]+'\n')
+            pos1 = i+1
+            pos2 = i+2
+            pos1 = str(pos1) + '.0'
+            pos2 = str(pos2) + '.0'
+            compareResultBox.replace(pos1, pos2, results[i] + '\n')
     else:
         query   = compareSearchBox.get()
         both = True
@@ -81,9 +85,11 @@ def search():
         results  = resultsB + resultsQ
         i=0
         for i in range(len(results)):
-            pos = i+1
-            pos = str(pos) + '.0'
-            compareResultBox.insert(pos, results[i]+'\n')
+            pos1 = i+1
+            pos2 = i+2
+            pos1 = str(pos1) + '.0'
+            pos2 = str(pos2) + '.0'
+            compareResultBox.replace(pos1, pos2, results[i] + '\n')
 
 
 
