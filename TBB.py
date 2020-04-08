@@ -44,8 +44,8 @@ def search():
         else: # regular search
             stemmed_query = bm25.StemQuery(stemmer, query, "b", book, chapter)
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 10)
-        
-        bibleResultBox.set()
+        print(results[0])
+        compareResultBox.insert('1.0', results[0])
 
     elif (tab == "Quran Search"):
         surah = surahSpinBox.get()
@@ -61,17 +61,16 @@ def search():
             stemmed_query = bm25.StemQuery(stemmer, query, "q", "", surah)
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 10)
 
-        quranResultBox.set(results)
+        quranResultBox.insert(1.0, results)
     else:
         both = True
         stemmed_query = bm25.StemQuery(stemmer, query, "x", book, chapter)
-        # if both, they can only search qith the query, so do a regular search for both
+        # if both, they can only search with the query, so do a regular search for both
         resultsB = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 5)
         resultsQ = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 5)
-        compareResultBox.set(resultsB + resultsQ)
+        compareResultBox.insert(1.0, resultsB + resultsQ)
 
 
-acronym_dictionary={"AKA":"Also known as", "OT":"Overtime"}
 
 ### GUI initialization ###
 
@@ -106,10 +105,8 @@ helpmenu.add_command(label='Settings', command=about)
 ### build bible tab ###
 
 # create frames for entry and results
-bibleFrameTop = Frame(bibleTab)
-bibleFrameTop.grid(row=0)
-bottomFrame   = Frame(bibleTab)
-bottomFrame.grid(row=1) 
+bibleFrameTop = Frame(bibleTab).grid(row=0)
+bottomFrame   = Frame(bibleTab).grid(row=1)
 
 # add labels
 Label(bibleTab, text="Bible", font=("Helvetica", 16), padx=3, pady=7).grid(row=0, column=0, sticky=W)
@@ -128,7 +125,7 @@ verseSpinBox   = tk.Spinbox(bibleTab, width=7)
 verseSpinBox.grid(row=1, column=4+1)
 bibleSearchBox = tk.Entry(bibleTab, width=30)
 bibleSearchBox.grid(row=2, column=1)
-bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12, state=DISABLED)
+bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12)
 bibleResultBox.grid(row=4, sticky=W)
 
 ### build quran tab ###
@@ -146,7 +143,7 @@ ayahSpinBox    = tk.Spinbox(quranTab, width=7)
 ayahSpinBox.grid(row=1, column=3)
 quranSearchBox = tk.Entry(quranTab, width=30)
 quranSearchBox.grid(row=2, column=1)
-quranResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED)
+quranResultBox = tk.Text(bottomFrame,width=60-3, height=12)
 quranResultBox.grid(row=4, sticky=W)
 
 ### build comparison tab ###
@@ -158,7 +155,7 @@ Label(compareTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).gr
 # add controls for search
 compareSearchBox = tk.Entry(compareTab, width=30)
 compareSearchBox.grid(row=2, column=1)
-compareResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED)
+compareResultBox = tk.Text(bottomFrame,width=60-3, height=12)
 compareResultBox.grid(row=4, sticky=W)
 
 ### build bottom frame ###
