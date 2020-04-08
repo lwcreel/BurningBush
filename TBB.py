@@ -106,8 +106,10 @@ helpmenu.add_command(label='Settings', command=about)
 ### build bible tab ###
 
 # create frames for entry and results
-bibleFrameTop = Frame(bibleTab).grid(row=0)
-bottomFrame   = Frame(bibleTab).grid(row=1) 
+bibleFrameTop = Frame(bibleTab)
+bibleFrameTop.grid(row=0)
+bottomFrame   = Frame(bibleTab)
+bottomFrame.grid(row=1) 
 
 # add labels
 Label(bibleTab, text="Bible", font=("Helvetica", 16), padx=3, pady=7).grid(row=0, column=0, sticky=W)
@@ -118,11 +120,16 @@ Label(bibleTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).grid
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 
 # add controls for search
-bookSpinBox    = tk.Spinbox(bibleTab).grid(row=1, column=1)
-chapterSpinBox = tk.Spinbox(bibleTab, width=7).grid(row=1, column=3)
-verseSpinBox   = tk.Spinbox(bibleTab, width=7).grid(row=1, column=4+1)
-bibleSearchBox = tk.Entry(bibleTab, width=30).grid(row=2, column=1)
-bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
+bookSpinBox    = tk.Spinbox(bibleTab)
+bookSpinBox.grid(row=1, column=1)
+chapterSpinBox = tk.Spinbox(bibleTab, width=7)
+chapterSpinBox.grid(row=1, column=3)
+verseSpinBox   = tk.Spinbox(bibleTab, width=7)
+verseSpinBox.grid(row=1, column=4+1)
+bibleSearchBox = tk.Entry(bibleTab, width=30)
+bibleSearchBox.grid(row=2, column=1)
+bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12, state=DISABLED)
+bibleResultBox.grid(row=4, sticky=W)
 
 ### build quran tab ###
 
@@ -133,10 +140,14 @@ Label(quranTab, text="Ayah", font=("Times New Roman", 12), padx=3, pady=7).grid(
 Label(quranTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 
 # add controls for search
-surahSpinBox   = tk.Spinbox(quranTab).grid(row=1, column=1)
-ayahSpinBox    = tk.Spinbox(quranTab, width=7).grid(row=1, column=3)
-quranSearchBox = tk.Entry(quranTab, width=30).grid(row=2, column=1)
-quranResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
+surahSpinBox   = tk.Spinbox(quranTab)
+surahSpinBox.grid(row=1, column=1)
+ayahSpinBox    = tk.Spinbox(quranTab, width=7)
+ayahSpinBox.grid(row=1, column=3)
+quranSearchBox = tk.Entry(quranTab, width=30)
+quranSearchBox.grid(row=2, column=1)
+quranResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED)
+quranResultBox.grid(row=4, sticky=W)
 
 ### build comparison tab ###
 
@@ -145,12 +156,15 @@ Label(compareTab, text="Comparison", font=("Helvetica", 16), padx=3, pady=7).gri
 Label(compareTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 
 # add controls for search
-compareSearchBox = tk.Entry(compareTab, width=30).grid(row=2, column=1)
-compareResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED).grid(row=4, sticky=W)
+compareSearchBox = tk.Entry(compareTab, width=30)
+compareSearchBox.grid(row=2, column=1)
+compareResultBox = tk.Text(bottomFrame,width=60-3, height=12, state=DISABLED)
+compareResultBox.grid(row=4, sticky=W)
 
 ### build bottom frame ###
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
-searchButton = tk.Button(bottomFrame, text="Search", width=7 , padx=7, command=search).grid(row=2, sticky=E)
+searchButton = tk.Button(bottomFrame, text="Search", width=7 , padx=7, command=search)
+searchButton.grid(row=2, sticky=E)
 
 # run code
 root.mainloop()
