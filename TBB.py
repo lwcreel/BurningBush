@@ -41,11 +41,15 @@ def search():
             oneVerse = True
             stemmed_query = book + " " + chapter + verse
             results = bm25.OneVerse(stemmed_query, "b")
+            results = results[0]
         else: # regular search
             stemmed_query = bm25.StemQuery(stemmer, query, "b", book, chapter)
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 10)
-        print(results[0])
-        compareResultBox.insert('1.0', results[0])
+        i=0
+        for i in len(results):
+            pos = i+1
+            pos = str(pos) + '.0'
+            compareResultBox.insert('1.0', results[i])
 
     elif (tab == "Quran Search"):
         surah = surahSpinBox.get()
@@ -57,18 +61,27 @@ def search():
             oneVerse = True
             stemmed_query = surah + ayah
             results = bm25.OneVerse(stemmed_query, "q")
+            results = results[0]
         else: # regular search
             stemmed_query = bm25.StemQuery(stemmer, query, "q", "", surah)
             results = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 10)
-
-        quranResultBox.insert(1.0, results)
+        i=0
+        for i in len(results):
+            pos = i+1
+            pos = str(pos) + '.0'
+            compareResultBox.insert('1.0', results[i])
     else:
         both = True
         stemmed_query = bm25.StemQuery(stemmer, query, "x", book, chapter)
         # if both, they can only search with the query, so do a regular search for both
         resultsB = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 5)
         resultsQ = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 5)
-        compareResultBox.insert(1.0, resultsB + resultsQ)
+        results  = resultsB + resultsQ
+        i=0
+        for i in len(results):
+            pos = i+1
+            pos = str(pos) + '.0'
+            compareResultBox.insert('1.0', results[i])
 
 
 
