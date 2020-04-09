@@ -21,6 +21,6 @@ stemmedCorpusB = stemmedBible.read().split(" _ ")
 
 corpusQ = quran.read().split(" _ ")
 stemmedCorpusQ = stemmedQuran.read().split(" _ ")
-
-print(corpusQ[1000])
-print(stemmedCorpusQ[1000])
+# random tests:
+# print(corpusQ[1000])
+# print(stemmedCorpusQ[1000])

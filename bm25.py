@@ -43,6 +43,7 @@ def CleanTexts (document):
 # fixes any misspellings in the query
 def FixMisspellings(tokenized_query):
     spell = SpellChecker()
+    misspelledMsg = []
     # gets rid of puncuation, makes lowercase
     bibleText = CleanTexts("BibleWithBookNames")
     quranText = CleanTexts("QuranWithSpaces")
@@ -51,10 +52,14 @@ def FixMisspellings(tokenized_query):
     spell.word_frequency.load_words(bibleText+quranText)
     misspelled = spell.unknown(tokenized_query) # finds the misspelled words
     for word in misspelled: # replaces misspelled words with the most likely replacement
-        tokenized_query = replace(tokenized_query,word,spell.correction(word))
-        print ("Replacing \"" + word +"\" with \""+ spell.correction(word) + "\"")
-        # print(spell.candidates(word)) # gets multiple options, could be useful
-    return tokenized_query
+        if word == "":
+            pass
+        else:
+            tokenized_query = replace(tokenized_query,word,spell.correction(word))
+            if word != spell.correction(word):
+                print ("Replacing \"" + word +"\" with \""+ spell.correction(word) + "\"")
+                misspelledMsg.append("Replaced \"" + word +"\" with \""+ spell.correction(word) + "\"")
+    return tokenized_query, misspelledMsg
 
 # cleans up the query and adds book/chapter to query if needed
 def StemQuery(stemmer, query, doc, book, chapter):
@@ -62,7 +67,7 @@ def StemQuery(stemmer, query, doc, book, chapter):
     query = re.sub(pat, '', query).lower() # make query lowercase
     tokenized_query = query.split(" ") # split query by space
     tokenized_query = [word for word in tokenized_query if word not in stopwords.words('english')] # remove stop words from query
-    tokenized_query = FixMisspellings(tokenized_query) # fix any misspellings that may be in query
+    tokenized_query, misspelledMsg = FixMisspellings(tokenized_query) # fix any misspellings that may be in query
     stemmed_query = []
     if (tokenized_query != ['']): # only need to stem if there is a query
         for word in tokenized_query: # stem query
@@ -78,8 +83,8 @@ def StemQuery(stemmer, query, doc, book, chapter):
             stemmed_query.insert(0, chapter) # adds chapter in front of query if included
     elif (doc == "x"): # can only search query when comparing so do nothing
         pass
-    print(stemmed_query)
-    return stemmed_query
+    # print(stemmed_query)
+    return stemmed_query, misspelledMsg
 
 # returns only one verse from the text
 def OneVerse(query, doc):
@@ -123,14 +128,16 @@ stemmer = PorterStemmer()
 
 # make corpus and stemmed corpus for both Bible and Quran
 corpusB, stemmedCorpusB = CreateCorpus("BibleWithBookNames.txt", "StemmedBibleWithBookNames.txt")
-corpusQ, stemmedCorpusQ = CreateCorpus("QuranWithSpaces.txt", "StemmedQuran.txt")
+corpusQ, stemmedCorpusQ = CreateCorpus("QuranWithSpaces.txt", "StemmedQuranWithSpaces.txt")
 
 # user input / query section
-doc = "q" # b for Bible, q for Quran, x for both
+doc = "b" # b for Bible, q for Quran, x for both
 book = ""
 chapter = ""
 verse = ""
-query = "beleive"
+query = "real"
+
+misspelledMsg = []
 
 # separated based on the doc (b, q, or x)
 if (doc == "b"):
@@ -141,7 +148,7 @@ if (doc == "b"):
         stemmed_query = book + " " + chapter + verse
         results = OneVerse(stemmed_query, "b")
     else: # regular search
-        stemmed_query = StemQuery(stemmer, query, "b", book, chapter)
+        stemmed_query, misspelledMsg = StemQuery(stemmer, query, "b", book, chapter)
         results = Search(stemmer, stemmed_query, corpusB, stemmedCorpusB, 10)
 elif (doc == "q"):
     if (chapter != ""):
@@ -151,32 +158,35 @@ elif (doc == "q"):
         stemmed_query = chapter + verse
         results = OneVerse(stemmed_query, "q")
     else: # regular search
-        stemmed_query = StemQuery(stemmer, query, "q", "", chapter)
+        stemmed_query, misspelledMsg = StemQuery(stemmer, query, "q", "", chapter)
         results = Search(stemmer, stemmed_query, corpusQ, stemmedCorpusQ, 10)
 elif (doc == "x"):
     both = True
-    stemmed_query = StemQuery(stemmer, query, "x", book, chapter)
+    stemmed_query, misspelledMsg = StemQuery(stemmer, query, "x", book, chapter)
     # if both, they can only search qith the query, so do a regular search for both
     resultsB = Search(stemmer, stemmed_query, corpusB, stemmedCorpusB, 5)
     resultsQ = Search(stemmer, stemmed_query, corpusQ, stemmedCorpusQ, 5)
 
-if (oneVerse and len(results) == 0):
-    print("No results found. Chapter or verse out of range.")
-elif (both and len(resultsB) == 0 and len(resultsQ == 0)):
-    print("No results found. Suggestions: make your query more specific and check for misspellings.")
-elif (not oneVerse and not both and len(results) == 0):
-    print("No results found. Suggestions: make your query more specific and check for misspellings.")
-else:
-    if (oneVerse):
-        results = results[0] # only keep the very first result
-        print(*results, sep = "")
-    elif (both):
-        print("Bible:")
-        print(*resultsB, sep = "\n")
-        print("\nQuran:")
-        print(*resultsQ, sep = "\n")
-    else:
-        print(*results, sep = "\n")
+
+# if (oneVerse and len(results) == 0):
+#     print("No results found. Chapter or verse out of range.")
+# elif (both and len(resultsB) == 0 and len(resultsQ) == 0):
+#     print("No results found. Suggestions: make your query more specific and check for misspellings.")
+# elif (not oneVerse and not both and len(results) == 0):
+#     print("No results found. Suggestions: make your query more specific and check for misspellings.")
+# else:
+#     if (oneVerse):
+#         results = results[0] # only keep the very first result
+#         print(*results, sep = "")
+#     elif (both):
+#         print("Bible:")
+#         print(*resultsB, sep = "\n")
+#         print("\nQuran:")
+#         print(*resultsQ, sep = "\n")
+#     else:
+#         print(*results, sep = "\n")
+
+
 
 
 
