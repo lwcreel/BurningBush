@@ -7,8 +7,8 @@ import nltk
 # nltk.download('stopwords')
 from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
-from rank_bm25 import BM25Okapi
 from nltk.corpus import stopwords
+from rank_bm25 import BM25Okapi
 from spellchecker import SpellChecker
 
 # functions:

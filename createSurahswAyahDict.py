@@ -1,5 +1,7 @@
 import re
 
+# creating surahswAyah dictionary
+
 quran = open("Docs/QuranWithSpaces.txt", "r")
 quranText = quran.read()
 quranText = quranText.split()

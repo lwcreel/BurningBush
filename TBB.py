@@ -20,6 +20,8 @@ def about():
     T.config(yscrollcommand=S.set)
     quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n
     \nThis application was made as a project in CSCE 470: Information Storage and Retrieval. It was created by Landon Creel, Hanna\nMitschke, and Sam Stone."""
+    # explain how it works, gives top 10 results or 5 and 5 from both if compare, exact verse if all entries filled out (disregards query), 
+    # can hit enter to search, can click clear to clear entries and results, checks for misspellings, etc...
     T.insert(END, quote)
 
 def clear():
@@ -28,9 +30,7 @@ def clear():
     if (tab == "Bible Search"):
         bookSpinBox.set(" ")
         chapterSpinBox.set(" ")
-        verseSpinBox.config(state = NORMAL)
-        verseSpinBox.delete(0,"end")
-        verseSpinBox.config(state = DISABLED)
+        verseSpinBox.set(" ")
         bibleSearchBox.delete(0,"end")
     elif (tab == "Quran Search"):
         surahSpinBox.set(" ")
@@ -38,29 +38,40 @@ def clear():
         quranSearchBox.delete(0,"end")
     else:
         compareSearchBox.delete(0,"end")
-    compareResultBox.config(state=NORMAL)
-    compareResultBox.delete("1.0","end")
-    compareResultBox.config(state=DISABLED)
+    resultBox.config(state=NORMAL)
+    resultBox.delete("1.0","end")
+    resultBox.config(state=DISABLED)
 
 def updateBible(*args):
-    chapter = chapterSpinBox.get()
     book = bookSpinBox.get()
-    book = (book.encode('ascii', 'ignore')).decode("utf-8")
+    book = (book.encode('ascii', 'ignore')).decode("utf-8") # ignore weird unicode stuff
+    chapter = chapterSpinBox.get()
+    if (chapter == ''):
+        chapter = ' '
     if (book == ' '): # lock the chapterSpinBox and verseSpinBox if there is no book
         chapterSpinBox.set(" ")
-        verseSpinBox.delete(0,"end")
+        verseSpinBox.set(" ")
         chapterSpinBox.config(state=DISABLED)
         verseSpinBox.config(state=DISABLED)
     if (chapter == ' '): # lock the verseSpinBox if there is no chapter
-        verseSpinBox.config(state=NORMAL)
-        verseSpinBox.delete(0,"end")
+        verseSpinBox.set(" ")
         verseSpinBox.config(state=DISABLED)
     if (book != ' '): # unlock the chapterSpinBox if there is a book
         maxChapter = bookswChapter[book] # get number of chapters given book
         chapters = [" "] + list(range(1, maxChapter+1))
         chapterSpinBox.config(values=(chapters), state="readonly")
-    if(book != ' ' and chapter != ' '): # unlock the verseSpinBox if there is a book and chapter
-        verseSpinBox.config(state="readonly")
+        if (chapter != ' '): # unlock the verseSpinBox if there is a chapter and book
+            verses = [" "] + list(range(1, findMaxVerse (book, chapter)+1))
+            verseSpinBox.config(values=(verses), state="readonly")
+
+def findMaxVerse (book, chapter): # finds the max verse given a book and chapter
+    c = bm25.stemmedCorpusB
+    highest = 0
+    for sentence in c:
+        words = sentence.split()
+        if words[0]==book and words[1]==str(chapter)+":" and int(words[2]) > highest:
+            highest = int(words[2])
+    return int(highest)
 
 def updateQuran(*args):
     surah = surahSpinBox.get()
@@ -70,16 +81,16 @@ def updateQuran(*args):
     elif (surah != ' '): # unlock the ayahSpinBox if there is a surah
         ayahSpinBox.config(state=NORMAL)
         ayahSpinBox.set(" ")
-        maxAyah = surahswAyah[surah] # get number of ayah given surah
+        maxAyah = surahswAyah[surah] # get number of ayahs given surah
         ayahs = [" "] + list(range(1, maxAyah+1))
         ayahSpinBox.config(values=(ayahs), state="readonly")
 
-def search():
+def search(event=None):
     tab=tabParent.tab(tabParent.select(), "text")
     stemmer=bm25.stemmer
     results=""
-    compareResultBox.config(state=NORMAL)
-    compareResultBox.delete("1.0","end")
+    resultBox.config(state=NORMAL)
+    resultBox.delete("1.0","end")
 
     misspelledMsg = []
     # booleans needed to check various conditions
@@ -89,13 +100,15 @@ def search():
     if (tab == "Bible Search"):
         # get needed values from controls
         book    = bookSpinBox.get()
-        book    = (book.encode('ascii', 'ignore')).decode("utf-8")
+        book    = (book.encode('ascii', 'ignore')).decode("utf-8") # ignore weird unicode stuff
         if (book == ' '):
             book = ''
         chapter = chapterSpinBox.get()
         if (chapter == ' '):
             chapter = ''
         verse   = verseSpinBox.get()
+        if (verse == ' '):
+            verse = ''
         query   = bibleSearchBox.get()
 
         if(book == "" and chapter == "" and verse == "" and query == ""):
@@ -168,14 +181,14 @@ def search():
         tk.messagebox.showwarning("No results found","Suggestions: make your query more specific and check for misspellings.")
     else: # display results
         if (oneVerse): # if there is only 1 verse to print
-            compareResultBox.insert(0.0, results)
+            resultBox.insert(0.0, results)
         else:
             i=0
             for i in range(len(results)):
                 pos = i+1
                 pos = str(pos) + '.0'
-                compareResultBox.insert(pos, results[i] + '\n')
-    compareResultBox.config(state=DISABLED)
+                resultBox.insert(pos, results[i] + '\n')
+    resultBox.config(state=DISABLED)
 
 
 
@@ -188,6 +201,7 @@ root.iconbitmap("icon.ico")
 root.geometry('460x420')
 root.maxsize(460,420)
 root.minsize(460,420)
+root.bind('<Return>', search) # can hit enter to search
 
 # create notebook and tabs
 tabParent  = ttk.Notebook(root)
@@ -215,7 +229,7 @@ helpmenu.add_command(label='Settings', command=about)
 topFrame = Frame(bibleTab).grid(row=0)
 bottomFrame   = Frame(bibleTab).grid(row=1)
 
-# create clear button to clear entry and results
+# create clear button to clear entries and results
 clearButton = tk.Button(topFrame, text="Clear", width=7 , padx=7, command=clear).grid(row=0, column=0, sticky=NE)
 
 ### build bible tab ###
@@ -231,23 +245,21 @@ Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7)
 # add controls for search
 bookswChapter = {"Genesis":50,"Exodus":40,"Leviticus":27,"Numbers":36,"Deuteronomy":34,"Joshua":24,"‌Judges":21, "Ruth":4,"1Samuel":31,"2Samuel":24,"1Kings":22,"2Kings":25,"1Chronicles":29,"2Chronicles":36,"Ezra":10,"Nehemiah":13,"Esther":10,"Job":42,"Psalms":150,"Proverbs":31,"Ecclesiastes":12,"SongofSolomon":8,"Isaiah":66,"Jeremiah":52,"Lamentations":5,"Ezekiel":48,"Daniel":12,"Hosea":14,"Joel":3,"Amos":9,"Obadiah":1,"Jonah":4,"Micah":7,"Nahum":3,"Habakkuk":3,"Zephaniah":3,"Haggai":2,"Zechariah":14,"Malachi":4,"Matthew":28,"Mark":16,"Luke":24,"John":21,"Acts":28,"Romans":16,"1Corinthians":16,"2Corinthians":13,"Galatians":6,"Ephesians":6,"Philippians":4,"Colossians":4,"1Thessalonians":5,"2Thessalonians":3,"1Timothy":6,"2Timothy":4,"Titus":3,"Philemon":1,"Hebrews":13,"James":5,"1Peter":5,"2Peter":3,"1John":5,"2John":1,"3John":1,"Jude":1,"Revelation":22}
 books = [" "] + list(bookswChapter.keys())
-
-changeVerse = tk.StringVar()
-changeVerse.trace('w', updateBible)
-chapterSpinBox = ttk.Combobox(bibleTab, width=6, textvariable=changeVerse, state = DISABLED)
-chapterSpinBox.grid(row=1, column=3)
-verses = [""] + list(range(1, 177))
-verseSpinBox = tk.Spinbox(bibleTab, width=6, values = (verses), state = DISABLED) # 176 b/c that is the highest verse number
-verseSpinBox.grid(row=1, column=4+1)
-bibleSearchBox = tk.Entry(bibleTab, width=30)
-bibleSearchBox.grid(row=2, column=1)
-bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12)
-bibleResultBox.grid(row=4, sticky=W)
 changeBook = tk.StringVar()
 changeBook.trace('w', updateBible)
 # bookSpinBox    = tk.Spinbox(bibleTab, values=books)
 bookSpinBox = ttk.Combobox(bibleTab, width = 27, values = (books), textvariable=changeBook, state="readonly")
 bookSpinBox.grid(row=1, column=1)
+changeChapter = tk.StringVar()
+changeChapter.trace('w', updateBible)
+chapterSpinBox = ttk.Combobox(bibleTab, width=5, textvariable=changeChapter, state = DISABLED)
+chapterSpinBox.grid(row=1, column=3)
+verseSpinBox = ttk.Combobox(bibleTab, width=5, state = DISABLED)
+verseSpinBox.grid(row=1, column=5)
+bibleSearchBox = tk.Entry(bibleTab, width=30)
+bibleSearchBox.grid(row=2, column=1)
+# bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12)
+# bibleResultBox.grid(row=4, sticky=W)
 
 ### build quran tab ###
 
@@ -269,8 +281,8 @@ ayahSpinBox    = ttk.Combobox(quranTab, width=7, state = DISABLED)
 ayahSpinBox.grid(row=1, column=3)
 quranSearchBox = tk.Entry(quranTab, width=30)
 quranSearchBox.grid(row=2, column=1)
-quranResultBox = tk.Text(bottomFrame,width=60-3, height=12)
-quranResultBox.grid(row=4, sticky=W)
+# quranResultBox = tk.Text(bottomFrame,width=60-3, height=12)
+# quranResultBox.grid(row=4, sticky=W)
 
 ### build comparison tab ###
 
@@ -281,10 +293,10 @@ Label(compareTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).gr
 # add controls for search
 compareSearchBox = tk.Entry(compareTab, width=30)
 compareSearchBox.grid(row=2, column=1)
-compareResultBox = tk.Text(bottomFrame, width=60-3, height=12, wrap="word", spacing1=8, state=DISABLED)
-compareResultBox.grid(row=4, sticky=W)
 
 ### build bottom frame ###
+resultBox = tk.Text(bottomFrame, width=60-3, height=12, wrap="word", spacing1=8, state=DISABLED)
+resultBox.grid(row=4, sticky=W)
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 searchButton = tk.Button(bottomFrame, text="Search", width=7 , padx=7, command=search)
 searchButton.grid(row=2, sticky=E)
