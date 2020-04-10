@@ -18,7 +18,7 @@ def about():
     T.pack(side=LEFT, fill=Y)
     S.config(command=T.yview)
     T.config(yscrollcommand=S.set)
-    quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n The Bible \n The Quran
+    quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n The King James Bible \n The Quran
     \nThis application was made as a project in CSCE 470: Information Storage and Retrieval. It was created by Landon Creel, Hanna\nMitschke, and Sam Stone. \n\n Version 1.0"""
     # explain how it works, gives top 10 results or 5 and 5 from both if compare, exact verse if all entries filled out (disregards query), 
     # can hit enter to search, can click clear to clear entries and results, checks for misspellings, etc...
@@ -26,7 +26,7 @@ def about():
 
 def help():
     window = tk.Toplevel(root)
-    window.title('About')
+    window.title('Help')
     window.iconbitmap("icon.ico")
     S = Scrollbar(window)
     T = Text(window, height=10, width=51, font=("Cambria", 10))
