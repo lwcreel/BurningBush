@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-import bm25
+#import bm25
 
 #Funtions
 def donothing():
@@ -18,8 +18,26 @@ def about():
     T.pack(side=LEFT, fill=Y)
     S.config(command=T.yview)
     T.config(yscrollcommand=S.set)
-    quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n
-    \nThis application was made as a project in CSCE 470: Information Storage and Retrieval. It was created by Landon Creel, Hanna\nMitschke, and Sam Stone."""
+    quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n The Bible \n The Quran
+    \nThis application was made as a project in CSCE 470: Information Storage and Retrieval. It was created by Landon Creel, Hanna\nMitschke, and Sam Stone. \n\n Version 1.0"""
+    # explain how it works, gives top 10 results or 5 and 5 from both if compare, exact verse if all entries filled out (disregards query), 
+    # can hit enter to search, can click clear to clear entries and results, checks for misspellings, etc...
+    T.insert(END, quote)
+
+def help():
+    window = tk.Toplevel(root)
+    window.title('About')
+    window.iconbitmap("icon.ico")
+    S = Scrollbar(window)
+    T = Text(window, height=10, width=51, font=("Cambria", 10))
+    S.pack(side=RIGHT, fill=Y)
+    T.pack(side=LEFT, fill=Y)
+    S.config(command=T.yview)
+    T.config(yscrollcommand=S.set)
+    quote = """There are three different possible types of query to make in this application. You can choose to query just one single document \n(Bible or Quran), or both in a comparison
+    \nIf you choose to only query a single document, you can \noptionally specify various parameters (book, chapter, verse for Bible and surah/ayah for Quran) to refine your query.
+    \nIf you choose to query the entire corpus, no additional\nparameters may be specified at this time.
+    \nFor all queries only the top 10 results are displayed (5 from each document are displayed in a comparison search)."""
     # explain how it works, gives top 10 results or 5 and 5 from both if compare, exact verse if all entries filled out (disregards query), 
     # can hit enter to search, can click clear to clear entries and results, checks for misspellings, etc...
     T.insert(END, quote)
@@ -219,9 +237,9 @@ tabParent.grid()
 menu = Menu(root) 
 root.config(menu=menu) 
 helpmenu = Menu(menu, tearoff = 0) 
-menu.add_cascade(label='Help', menu=helpmenu) 
+menu.add_cascade(label='Menu', menu=helpmenu) 
 helpmenu.add_command(label='About', command=about) 
-helpmenu.add_command(label='Settings', command=about)
+helpmenu.add_command(label='Help', command=help)
 
 ### create frames ###
 
@@ -296,7 +314,11 @@ compareSearchBox.grid(row=2, column=1)
 
 ### build bottom frame ###
 resultBox = tk.Text(bottomFrame, width=60-3, height=12, wrap="word", spacing1=8, state=DISABLED)
-resultBox.grid(row=4, sticky=W)
+resultBox.grid(row=4, column=0, sticky="W")
+scrollBar = ttk.Scrollbar(bottomFrame, command=resultBox.yview)
+scrollBar.grid(row=4, column=1)
+resultBox['yscrollcommand'] = scrollBar.set
+
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 searchButton = tk.Button(bottomFrame, text="Search", width=7 , padx=7, command=search)
 searchButton.grid(row=2, sticky=E)
