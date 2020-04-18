@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-#import bm25
+import bm25
 
 #Funtions
 def donothing():
@@ -18,10 +18,8 @@ def about():
     T.pack(side=LEFT, fill=Y)
     S.config(command=T.yview)
     T.config(yscrollcommand=S.set)
-    quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n The King James Bible \n The Quran
+    quote = """The Burning Bush (TBB) is a search engine for religious texts.\nCurrently, the religious texts included are:\n   -The King James Bible \n   -The Quran
     \nThis application was made as a project in CSCE 470: Information Storage and Retrieval. It was created by Landon Creel, Hanna\nMitschke, and Sam Stone. \n\n Version 1.0"""
-    # explain how it works, gives top 10 results or 5 and 5 from both if compare, exact verse if all entries filled out (disregards query), 
-    # can hit enter to search, can click clear to clear entries and results, checks for misspellings, etc...
     T.insert(END, quote)
 
 def help():
@@ -34,12 +32,12 @@ def help():
     T.pack(side=LEFT, fill=Y)
     S.config(command=T.yview)
     T.config(yscrollcommand=S.set)
-    quote = """There are three different possible types of query to make in this application. You can choose to query just one single document \n(Bible or Quran), or both in a comparison
+    quote = """There are three different possible types of query to make in this application. You can choose to query just one single document \n(Bible or Quran), or both in a comparison.
     \nIf you choose to only query a single document, you can \noptionally specify various parameters (book, chapter, verse for Bible and surah/ayah for Quran) to refine your query.
     \nIf you choose to query the entire corpus, no additional\nparameters may be specified at this time.
-    \nFor all queries only the top 10 results are displayed (5 from each document are displayed in a comparison search)."""
-    # explain how it works, gives top 10 results or 5 and 5 from both if compare, exact verse if all entries filled out (disregards query), 
-    # can hit enter to search, can click clear to clear entries and results, checks for misspellings, etc...
+    \nFor all queries, only the top 10 results are displayed (5 from\neach document are displayed in a comparison search).
+    \nThis application also checks for any misspellings in your query and corrects them before searching.
+    \nThe clear button clears the results box and any entries on the\ncurrent tab. The search button will begin the search process,\nwhich you can also start by clicking the enter key on your\nkeyboard."""
     T.insert(END, quote)
 
 def clear():
@@ -173,7 +171,15 @@ def search(event=None):
         # if both, they can only search with the query, so do a regular search for both
         resultsB = bm25.Search(stemmer, stemmed_query, bm25.corpusB, bm25.stemmedCorpusB, 5)
         resultsQ = bm25.Search(stemmer, stemmed_query, bm25.corpusQ, bm25.stemmedCorpusQ, 5)
-        results  = ["Bible: \n"] + resultsB + ["Quran: "] + resultsQ
+        if (len(resultsB) == 0 and len(resultsQ) == 0):
+            resultsB = ""
+            resultsQ = ""
+        else:
+            if (len(resultsB) == 0):
+                resultsB = ["No Bible results found"]
+            if (len(resultsQ) == 0):
+                resultsQ = ["No Quran results found"]
+            results  = ["Bible: \n"] + resultsB + ["Quran: "] + resultsQ
 
     # show misspelling correction(s)
     if(len(misspelledMsg) != 0 ):
@@ -261,11 +267,10 @@ Label(bibleTab, text="Query", font=("Times New Roman", 12), padx=3, pady=7).grid
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 
 # add controls for search
-bookswChapter = {"Genesis":50,"Exodus":40,"Leviticus":27,"Numbers":36,"Deuteronomy":34,"Joshua":24,"‌Judges":21, "Ruth":4,"1Samuel":31,"2Samuel":24,"1Kings":22,"2Kings":25,"1Chronicles":29,"2Chronicles":36,"Ezra":10,"Nehemiah":13,"Esther":10,"Job":42,"Psalms":150,"Proverbs":31,"Ecclesiastes":12,"SongofSolomon":8,"Isaiah":66,"Jeremiah":52,"Lamentations":5,"Ezekiel":48,"Daniel":12,"Hosea":14,"Joel":3,"Amos":9,"Obadiah":1,"Jonah":4,"Micah":7,"Nahum":3,"Habakkuk":3,"Zephaniah":3,"Haggai":2,"Zechariah":14,"Malachi":4,"Matthew":28,"Mark":16,"Luke":24,"John":21,"Acts":28,"Romans":16,"1Corinthians":16,"2Corinthians":13,"Galatians":6,"Ephesians":6,"Philippians":4,"Colossians":4,"1Thessalonians":5,"2Thessalonians":3,"1Timothy":6,"2Timothy":4,"Titus":3,"Philemon":1,"Hebrews":13,"James":5,"1Peter":5,"2Peter":3,"1John":5,"2John":1,"3John":1,"Jude":1,"Revelation":22}
+bookswChapter = {"Genesis":50,"Exodus":40,"Leviticus":27,"Numbers":36,"Deuteronomy":34,"Joshua":24,"Judges":21, "Ruth":4,"1Samuel":31,"2Samuel":24,"1Kings":22,"2Kings":25,"1Chronicles":29,"2Chronicles":36,"Ezra":10,"Nehemiah":13,"Esther":10,"Job":42,"Psalms":150,"Proverbs":31,"Ecclesiastes":12,"SongofSolomon":8,"Isaiah":66,"Jeremiah":52,"Lamentations":5,"Ezekiel":48,"Daniel":12,"Hosea":14,"Joel":3,"Amos":9,"Obadiah":1,"Jonah":4,"Micah":7,"Nahum":3,"Habakkuk":3,"Zephaniah":3,"Haggai":2,"Zechariah":14,"Malachi":4,"Matthew":28,"Mark":16,"Luke":24,"John":21,"Acts":28,"Romans":16,"1Corinthians":16,"2Corinthians":13,"Galatians":6,"Ephesians":6,"Philippians":4,"Colossians":4,"1Thessalonians":5,"2Thessalonians":3,"1Timothy":6,"2Timothy":4,"Titus":3,"Philemon":1,"Hebrews":13,"James":5,"1Peter":5,"2Peter":3,"1John":5,"2John":1,"3John":1,"Jude":1,"Revelation":22}
 books = [" "] + list(bookswChapter.keys())
 changeBook = tk.StringVar()
 changeBook.trace('w', updateBible)
-# bookSpinBox    = tk.Spinbox(bibleTab, values=books)
 bookSpinBox = ttk.Combobox(bibleTab, width = 27, values = (books), textvariable=changeBook, state="readonly")
 bookSpinBox.grid(row=1, column=1)
 changeChapter = tk.StringVar()
@@ -276,8 +281,6 @@ verseSpinBox = ttk.Combobox(bibleTab, width=5, state = DISABLED)
 verseSpinBox.grid(row=1, column=5)
 bibleSearchBox = tk.Entry(bibleTab, width=30)
 bibleSearchBox.grid(row=2, column=1)
-# bibleResultBox = tk.Text(bottomFrame, width=60-3, height=12)
-# bibleResultBox.grid(row=4, sticky=W)
 
 ### build quran tab ###
 
@@ -299,8 +302,6 @@ ayahSpinBox    = ttk.Combobox(quranTab, width=7, state = DISABLED)
 ayahSpinBox.grid(row=1, column=3)
 quranSearchBox = tk.Entry(quranTab, width=30)
 quranSearchBox.grid(row=2, column=1)
-# quranResultBox = tk.Text(bottomFrame,width=60-3, height=12)
-# quranResultBox.grid(row=4, sticky=W)
 
 ### build comparison tab ###
 
@@ -325,4 +326,3 @@ searchButton.grid(row=2, sticky=E)
 
 # run code
 root.mainloop()
-
