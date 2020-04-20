@@ -3,8 +3,10 @@
 
 import re
 import nltk
-# nltk.download('punkt')
-# nltk.download('stopwords')
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
 from nltk.stem import PorterStemmer
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
@@ -57,7 +59,7 @@ def FixMisspellings(tokenized_query):
         else:
             tokenized_query = replace(tokenized_query,word,spell.correction(word))
             if word != spell.correction(word):
-                print ("Replacing \"" + word +"\" with \""+ spell.correction(word) + "\"")
+                # print ("Replacing \"" + word +"\" with \""+ spell.correction(word) + "\"")
                 misspelledMsg.append("Replaced \"" + word +"\" with \""+ spell.correction(word) + "\"")
     return tokenized_query, misspelledMsg
 

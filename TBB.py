@@ -5,9 +5,7 @@ from tkinter import ttk
 import bm25
 
 #Funtions
-def donothing():
-    x = 0
-
+# about window from menu dropdown
 def about():
     window = tk.Toplevel(root)
     window.title('About')
@@ -22,6 +20,7 @@ def about():
     \nThis application was made as a project in CSCE 470: Information Storage and Retrieval. It was created by Landon Creel, Hanna\nMitschke, and Sam Stone. \n\n Version 1.0"""
     T.insert(END, quote)
 
+# help window from menu dropdown
 def help():
     window = tk.Toplevel(root)
     window.title('Help')
@@ -40,8 +39,8 @@ def help():
     \nThe clear button clears the results box and any entries on the\ncurrent tab. The search button will begin the search process,\nwhich you can also start by clicking the enter key on your\nkeyboard."""
     T.insert(END, quote)
 
+# clear all entries and result box
 def clear():
-    # clear all entries and result box
     tab=tabParent.tab(tabParent.select(), "text")
     if (tab == "Bible Search"):
         bookSpinBox.set(" ")
@@ -58,6 +57,7 @@ def clear():
     resultBox.delete("1.0","end")
     resultBox.config(state=DISABLED)
 
+# locks/unlocks downdowns for bible
 def updateBible(*args):
     book = bookSpinBox.get()
     book = (book.encode('ascii', 'ignore')).decode("utf-8") # ignore weird unicode stuff
@@ -80,7 +80,8 @@ def updateBible(*args):
             verses = [" "] + list(range(1, findMaxVerse (book, chapter)+1))
             verseSpinBox.config(values=(verses), state="readonly")
 
-def findMaxVerse (book, chapter): # finds the max verse given a book and chapter
+# finds the max verse given a book and chapter
+def findMaxVerse (book, chapter):
     c = bm25.stemmedCorpusB
     highest = 0
     for sentence in c:
@@ -89,6 +90,7 @@ def findMaxVerse (book, chapter): # finds the max verse given a book and chapter
             highest = int(words[2])
     return int(highest)
 
+# locks/unlocks downdowns for quran
 def updateQuran(*args):
     surah = surahSpinBox.get()
     if (surah == ' '): # lock the ayahSpinBox if there is no surah
@@ -101,6 +103,7 @@ def updateQuran(*args):
         ayahs = [" "] + list(range(1, maxAyah+1))
         ayahSpinBox.config(values=(ayahs), state="readonly")
 
+# searches the documents given query
 def search(event=None):
     tab=tabParent.tab(tabParent.select(), "text")
     stemmer=bm25.stemmer
