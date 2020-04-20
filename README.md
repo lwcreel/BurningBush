@@ -1,5 +1,6 @@
 # How to run The Burning Bush
 
+Ensure you are running the most current version of Python (3.8.2)
 
 You have to run the following commands in the terminal:<br>
 
