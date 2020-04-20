@@ -7,7 +7,7 @@ pip install rank_bm25<br>
 pip install pyspellchecker <br><br>
 
 
-You have to have the following lines in a file and run the file (see setup.py):<br>
+You have to add the following lines in a file and run the file (see setup.py):<br>
 
 import nltk<br>
 nltk.download('punkt')<br>
