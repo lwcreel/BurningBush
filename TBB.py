@@ -182,7 +182,7 @@ def search(event=None):
                 resultsB = ["No Bible results found"]
             if (len(resultsQ) == 0):
                 resultsQ = ["No Quran results found"]
-            results  = ["Bible: \n"] + resultsB + ["Quran: "] + resultsQ
+            results  = ["Bible: \n"] + resultsB + ["\n"] + ["Quran: "] + resultsQ
 
     # show misspelling correction(s)
     if(len(misspelledMsg) != 0 ):
@@ -215,6 +215,8 @@ def search(event=None):
                 pos = i+1
                 pos = str(pos) + '.0'
                 resultBox.insert(pos, results[i] + '\n')
+            pos = resultBox.search('\n', END, backwards=True, stopindex="1.0")
+            resultBox.delete(pos)
     resultBox.config(state=DISABLED)
 
 
@@ -225,9 +227,9 @@ def search(event=None):
 root = tk.Tk()
 root.title('The Burning Bush')
 root.iconbitmap("icon.ico")
-root.geometry('460x420')
-root.maxsize(460,420)
-root.minsize(460,420)
+root.geometry('460x480')
+root.maxsize(460,480)
+root.minsize(460,480)
 root.bind('<Return>', search) # can hit enter to search
 
 # create notebook and tabs
@@ -317,11 +319,29 @@ compareSearchBox = tk.Entry(compareTab, width=30)
 compareSearchBox.grid(row=2, column=1)
 
 ### build bottom frame ###
-resultBox = tk.Text(bottomFrame, width=60-3, height=12, wrap="word", spacing1=8, state=DISABLED)
-resultBox.grid(row=4, column=0, sticky="W")
+resultBox = tk.Text(bottomFrame, width=54, height=12, wrap="word", spacing1=8, state=DISABLED)
+resultBox.grid(row=4, column=0, sticky=W)
+# resultBox.pack(side='left', fill='both', expand=True)
 scrollBar = ttk.Scrollbar(bottomFrame, command=resultBox.yview)
-scrollBar.grid(row=4, column=1)
-resultBox['yscrollcommand'] = scrollBar.set
+scrollBar.grid(row=4, column=0, sticky='NSE')
+resultBox.config(yscrollcommand= scrollBar.set)
+scrollBar.config(command= resultBox.yview)
+# resultBox['yscrollcommand'] = scrollBar.set
+# self.grid()
+
+
+# self.frame = Frame(self)
+# self.frame.grid(column=1,row=5, columnspan=6, rowspan=1, sticky='W')
+# self.entry3 = Text(self.frame,height=18)
+# self.entry3.pack(side='left', fill='both', expand=True)
+# # PROBLEM: SOLVED
+# self.scrollbar = Scrollbar(self.frame) # height= not permitted here!
+# self.entry3.config(yscrollcommand= self.scrollbar.set)
+# self.scrollbar.config(command= self.entry3.yview)
+# self.grid()
+# self.scrollbar.pack(side='right', fill='y')
+
+
 
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 searchButton = tk.Button(bottomFrame, text="Search", width=7 , padx=7, command=search)
