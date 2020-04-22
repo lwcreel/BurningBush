@@ -321,27 +321,10 @@ compareSearchBox.grid(row=2, column=1)
 ### build bottom frame ###
 resultBox = tk.Text(bottomFrame, width=54, height=12, wrap="word", spacing1=8, state=DISABLED)
 resultBox.grid(row=4, column=0, sticky=W)
-# resultBox.pack(side='left', fill='both', expand=True)
 scrollBar = ttk.Scrollbar(bottomFrame, command=resultBox.yview)
 scrollBar.grid(row=4, column=0, sticky='NSE')
 resultBox.config(yscrollcommand= scrollBar.set)
 scrollBar.config(command= resultBox.yview)
-# resultBox['yscrollcommand'] = scrollBar.set
-# self.grid()
-
-
-# self.frame = Frame(self)
-# self.frame.grid(column=1,row=5, columnspan=6, rowspan=1, sticky='W')
-# self.entry3 = Text(self.frame,height=18)
-# self.entry3.pack(side='left', fill='both', expand=True)
-# # PROBLEM: SOLVED
-# self.scrollbar = Scrollbar(self.frame) # height= not permitted here!
-# self.entry3.config(yscrollcommand= self.scrollbar.set)
-# self.scrollbar.config(command= self.entry3.yview)
-# self.grid()
-# self.scrollbar.pack(side='right', fill='y')
-
-
 
 Label(bottomFrame, text="Results", font=("Times New Roman", 12), padx=3, pady=7).grid(row=2, column=0, sticky=W)
 searchButton = tk.Button(bottomFrame, text="Search", width=7 , padx=7, command=search)
